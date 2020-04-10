@@ -2,21 +2,28 @@ const solutions = {
     algo: document.querySelector(".algo"),
 
     print(title, callback, ...input) {
-        let output;
+        let output, start = Date.now(), finish;
         try {
             output = callback(...input)
+            finish = Date.now() - start; 
         } catch (error) {
             output = error
         }
 
         let li = document.createElement("li");
-        li.innerHTML = this._setInnerHTML(title, input, output);
+        li.innerHTML = this._setInnerHTML(title, input, output, finish);
         this.algo.append(li);
 
-        li.onclick = event => event.target === li.querySelector(".solution-remove") && li.remove()
+        li.onclick = event => event.target === li.querySelector(".solution-remove") && this.remove(li)
+        
+        return li
     },
 
-    _setInnerHTML(title, input, output) {
+    remove(li) {
+        li.remove()
+    },
+
+    _setInnerHTML(title, input, output, finish) {
         return `
             <h4 class="solution-title">${title}</h4>
             <div class="solution-content">
@@ -27,12 +34,14 @@ const solutions = {
                 <div class="solution-section">
                     <div class="solution-inout">Output:</div>
                     <div>${output}</div>  
-                </div> 
+                </div>
+                <small class="solution-runtime">Runtime ${finish} ms</small>
             </div>
             <span class="solution-remove">&times;</span>
         `;
     }
 };
 
-//test
-solutions.print("Test" , () => "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi, qui aspernatur ipsa itaque ad maiores, commodi nemo labore voluptates tenetur a nam. Pariatur ullam iure dolore quod labore eos quasi.");
+let li = solutions.print("test", () => "out data", "input data")
+
+setTimeout(() => solutions.remove(li), 2500)
